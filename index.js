@@ -17,6 +17,13 @@ async function run() {
     try {
         await client.connect();
         const itemsCollection = client.db("ITManagement").collection("item");
+        // Get Multiple Data
+        app.get('/item', async (req, res) => { 
+            const query = {};
+            const cursor = itemsCollection.find(query);
+            const items = await cursor.limit(6).toArray();
+            res.send(items);
+        });
         // create a document to insert
         app.post('/item', async (req, res) => {
             const item = req.body;
