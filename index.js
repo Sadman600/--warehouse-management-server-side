@@ -25,10 +25,36 @@ async function run() {
             const items = await cursor.toArray();
             res.send(items);
         });
+        // Get Single Data
+        app.get('/item/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const item = await itemsCollection.findOne(query);
+            res.send(item);
+        });
+        // Update a single data
+        app.put('/item/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateItems = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    email: updateItems.email,
+                    name: updateItems.name,
+                    image: updateItems.image,
+                    description: updateItems.description,
+                    price: updateItems.price,
+                    quantity: updateItems.quantity,
+                    supplier: updateItems.supplier
+                }
+            };
+            const result = await itemsCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        });
         // Get Multiple Data query email
         app.get('/myitems', async (req, res) => {
             const email = req.query.email;
-            console.log(email);
             const query = { email: email };
             const cursor = itemsCollection.find(query);
             const items = await cursor.toArray();
