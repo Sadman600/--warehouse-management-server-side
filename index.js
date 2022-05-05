@@ -17,9 +17,19 @@ async function run() {
     try {
         await client.connect();
         const itemsCollection = client.db("ITManagement").collection("item");
+
         // Get Multiple Data
-        app.get('/item', async (req, res) => { 
+        app.get('/item', async (req, res) => {
             const query = {};
+            const cursor = itemsCollection.find(query);
+            const items = await cursor.toArray();
+            res.send(items);
+        });
+        // Get Multiple Data query email
+        app.get('/myitems', async (req, res) => {
+            const email = req.query.email;
+            console.log(email);
+            const query = { email: email };
             const cursor = itemsCollection.find(query);
             const items = await cursor.toArray();
             res.send(items);
@@ -33,7 +43,7 @@ async function run() {
         // Delete a document to database
         app.delete('/item/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id:ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const result = await itemsCollection.deleteOne(query);
             res.send({ result });
         });
